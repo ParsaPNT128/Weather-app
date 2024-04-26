@@ -6,6 +6,7 @@ import ttkbootstrap
 from PIL import Image, ImageTk
 import regex as re
 import calendar
+import tkintermapview
 
 # gets the weather status in the next 24 hours
 def get_fullday():
@@ -146,7 +147,7 @@ def get_weather(city):
     get_future(todayh)
 
     # returns the required variables
-    return (icon_url, description, city, countrty, temperature)
+    return (icon_url, description, city, countrty, temperature, lon, lat)
 
 # configs the labels at the top and calls the get_weather fnuction
 def search():
@@ -155,7 +156,7 @@ def search():
     if result is None:
         return ""
 
-    icon_url, description, city, countrty, temperature = result
+    icon_url, description, city, countrty, temperature, lon, lat = result
     location_label.configure(text=f"{city}, {countrty}")
     image = Image.open(requests.get(icon_url, stream= True).raw)
     image = image.resize((90, 90))
@@ -165,10 +166,15 @@ def search():
     temperature_label.configure(text = f"{temperature}° C")
     description_label.configure(text = description)
 
+    map_widget = tkintermapview.TkinterMapView(root, width=500, height=500, corner_radius=0)
+    map_widget.set_position(lat, lon)
+    map_widget.set_zoom(15)
+    map_widget.place(x=650, y=125)
+
 # defines the screen
 root = ttkbootstrap.Window()
 root.title("Weather Application")
-root.geometry("600x650")
+root.geometry("1175x650")
 root.resizable(False, False)
 
 # defines the gui
